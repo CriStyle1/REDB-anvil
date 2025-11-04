@@ -1741,6 +1741,38 @@ def format_email_log_anvil(ap_code):
     return sm.format_email_log(ap_code)
 
 # Add more callable functions here for any other backend function you need
+@anvil.server.callable
+def get_all_apartment_codes_anvil():
+    """
+    Server function to retrieve all unique apartment codes from the 'APARTMENTS' sheet.
+    Uses the cached sheet manager instance.
+    """
+    try:
+        # Get the existing sheet manager instance (or create one if it doesn't exist)
+        sm = get_sheet_manager_instance()
+
+        # Access the data for the 'APARTMENTS' sheet
+        apartments_data = sm.all_data["APARTMENTS"]["data"]
+
+        # Extract all codes from the first column (index 0) of the data rows
+        # We assume the first column contains the AP CODEs
+        all_codes = set() # Using a set to avoid duplicates
+        for row in apartments_data:
+            if len(row) > 0: # Make sure the row has at least one element
+                code = row[0] # First column is index 0
+                if code: # Only add non-empty codes
+                    all_codes.add(code.strip()) # Clean up whitespace
+
+        # Convert the set to a sorted list for the dropdown
+        sorted_codes = sorted(list(all_codes))
+
+        return sorted_codes
+
+    except Exception as e:
+        print(f"Error fetching apartment codes: {e}")
+        # Return an error message list to show in the dropdown
+        return [f"Error loading codes: {str(e)}"]
+
 
 def connect_to_anvil():
     """Loads the uplink key and connects to the Anvil server."""
