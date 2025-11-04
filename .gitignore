@@ -2,3 +2,7 @@
 *.pyo
 __pycache__
 .anvil-data
+credentials.json
+token.json
+todo_list_cache.json
+anvil_secrets.json
